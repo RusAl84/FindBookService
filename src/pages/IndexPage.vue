@@ -20,13 +20,17 @@
           </q-card-section>
           <q-card-section>
             <div class="text-h6">Результат:</div>
-            <q-input
-              class="inputtext"
-              v-model="resp_text"
-              type="textarea"
-              readonly
-              autogrow
-            />
+            <q-card-section v-if="resp_data.length > 0">
+              <div v-for="(line, i) in resp_data" :key="i">
+                <div>
+                  <b>Наиболее подходящая книга &nbsp; {{ i + 1 }}</b>
+                </div>
+                <div><b>Название:</b> {{ line.title }}</div>
+                <div><b>Авторы: </b>{{ line.authors }}</div>
+                <div><b>Описание: </b>{{ line.descr }}</div>
+                <br />
+              </div>
+            </q-card-section>
           </q-card-section>
         </div></div
     ></q-card>
@@ -40,8 +44,8 @@ import axios from "axios";
 export default {
   data() {
     return {
-      text: "",
-      resp_text: "",
+      proc_text: "",
+      resp_data: ref([{}]),
     };
   },
   methods: {
@@ -58,12 +62,11 @@ export default {
         method: "post",
         url: "http://127.0.0.1:5000/find_book",
         data: {
-          text: this.text,
+          text: this.proc_text,
         },
       });
       console.log(response);
       this.resp_data = response.data;
-      this.resp_text = response.data.sintetic;
     },
     async onProcAdd() {
       const response = await axios({
